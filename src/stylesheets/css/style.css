@@ -1,0 +1,100 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@100;400;500;600&display=swap");
+#tic_tac_toe_board {
+  height: 500px;
+  width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 73px;
+  background: #c0d6e3;
+  box-shadow: 36px 36px 84px #a7bac5, -36px -36px 84px #d9f2ff; }
+
+@media (max-width: 600px) {
+  #tic_tac_toe_board {
+    height: 300px;
+    width: 300px;
+    border-radius: 73px;
+    box-shadow: 36px 36px 84px #a7bac5, -36px -36px 84px #d9f2ff; }
+
+  #board {
+    height: 250px;
+    width: 250px; }
+
+  #app-container {
+    height: 80vh; } }
+html, body {
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0;
+  font-family: "Raleway", sans-serif;
+  height: 100%; }
+
+body {
+  background: #c0d6e3; }
+
+#app-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: auto; }
+
+.size-select-container {
+  width: 160px;
+  margin: auto;
+  margin-bottom: 30px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  border-radius: 13px;
+  background: #c0d6e3;
+  box-shadow: 16px 16px 32px #a7bac5, -16px -16px 32px #d9f2ff; }
+
+.size_select {
+  font-size: 20px;
+  text-align: center;
+  font-family: "Raleway", sans-serif;
+  font-weight: 400; }
+
+.title-container {
+  font-size: 2rem; }
+
+#ttt-initiate-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; }
+
+#play-button {
+  width: 120px;
+  height: 40px;
+  font-size: 20px;
+  text-align: center;
+  border-radius: 40px;
+  font-weight: bolder;
+  font-weight: 400; }
+
+#size {
+  font-size: 20px;
+  width: 70px;
+  height: 25px;
+  text-align: center; }
+
+@media (max-width: 500px) {
+  .size_select {
+    font-size: 20px; }
+
+  #size {
+    font-size: 18px; }
+
+  #play-button {
+    width: 90px;
+    height: 30px;
+    font-size: 20px;
+    text-align: center;
+    border-radius: 63px;
+    background: #55b9f3;
+    box-shadow: inset 18px -18px 26px #418db9, inset -18px 18px 26px #69e5ff; } }
+
+/*# sourceMappingURL=style.css.map */

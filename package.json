@@ -7,6 +7,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "express": "^4.17.1",
+    "node-sass": "^4.14.1",
     "nodemon": "^2.0.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -17,7 +18,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "watch": "sass --watch ./src/stylesheets/scss/_main.scss:./src/stylesheets/css/style.css"
   },
   "eslintConfig": {
     "extends": "react-app"
