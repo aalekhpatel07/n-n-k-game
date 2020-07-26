@@ -1,7 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Raleway:wght@100;400;500;600&display=swap");
 #tic_tac_toe_board {
+  margin-top: 50px;
   height: 500px;
   width: 500px;
+  min-width: 500px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -9,19 +11,18 @@
   background: #c0d6e3;
   box-shadow: 36px 36px 84px #a7bac5, -36px -36px 84px #d9f2ff; }
 
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   #tic_tac_toe_board {
+    margin-top: 50px;
     height: 300px;
     width: 300px;
+    min-width: 300px;
     border-radius: 73px;
     box-shadow: 36px 36px 84px #a7bac5, -36px -36px 84px #d9f2ff; }
 
   #board {
     height: 250px;
-    width: 250px; }
-
-  #app-container {
-    height: 80vh; } }
+    width: 250px; } }
 html, body {
   margin: 0;
   box-sizing: border-box;
@@ -38,15 +39,28 @@ body {
   justify-content: center;
   align-items: center;
   width: 100%;
+  padding: 10px;
+  margin: auto; }
+
+.instructions-title {
+  font-size: 30px; }
+
+.rest-of-app {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
   margin: auto; }
 
 .size-select-container {
-  width: 160px;
+  width: 100%;
   margin: auto;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   align-items: center;
   justify-content: center;
   display: flex;
+  flex-direction: column;
   border-radius: 13px;
   background: #c0d6e3;
   box-shadow: 16px 16px 32px #a7bac5, -16px -16px 32px #d9f2ff; }
@@ -58,15 +72,19 @@ body {
   font-weight: 400; }
 
 .title-container {
-  font-size: 2rem; }
+  font-size: 30px;
+  width: 100%;
+  text-align: center; }
 
 #ttt-initiate-form {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center; }
+  align-items: center;
+  width: 50%;
+  margin: auto; }
 
-#play-button {
+#replay-button {
   width: 120px;
   height: 40px;
   font-size: 20px;
@@ -77,13 +95,48 @@ body {
 
 #size {
   font-size: 20px;
-  width: 70px;
+  width: 100px;
   height: 25px;
-  text-align: center; }
+  text-align: center;
+  margin: auto; }
 
-@media (max-width: 500px) {
+#m-select {
+  font-size: 20px;
+  text-align: center;
+  font-family: "Raleway", sans-serif;
+  font-weight: 400;
+  width: 100px; }
+
+.info-box {
+  margin-bottom: 40px;
+  padding: 10px; }
+
+dt {
+  font-weight: 600; }
+
+dd {
+  font-weight: 400; }
+
+.info-box {
+  max-width: 90%; }
+
+@media (max-width: 800px) {
   .size_select {
     font-size: 20px; }
+
+  .info-box {
+    width: 100%; }
+
+  .instructions-title {
+    font-size: 25px; }
+
+  .rest-of-app {
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    margin: auto;
+    margin-top: 50px; }
 
   #size {
     font-size: 18px; }
@@ -95,6 +148,13 @@ body {
     text-align: center;
     border-radius: 63px;
     background: #55b9f3;
-    box-shadow: inset 18px -18px 26px #418db9, inset -18px 18px 26px #69e5ff; } }
+    box-shadow: inset 18px -18px 26px #418db9, inset -18px 18px 26px #69e5ff; }
+
+  #m-select {
+    font-size: 20px; }
+
+  .title-container {
+    margin-top: -20px;
+    margin-bottom: -20px; } }
 
 /*# sourceMappingURL=style.css.map */

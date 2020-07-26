@@ -1,6 +1,8 @@
 #tic_tac_toe_board{
+    margin-top: 50px;
     height: 500px;
     width: 500px;
+    min-width: 500px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -14,10 +16,12 @@
 }
 
 
-@media(max-width: 600px){
+@media(max-width: 800px){
     #tic_tac_toe_board{
+        margin-top: 50px;
         height: 300px;
         width: 300px;
+        min-width: 300px;
         border-radius: 73px;
         box-shadow:  36px 36px 84px #a7bac5, 
                     -36px -36px 84px #d9f2ff;
@@ -26,7 +30,7 @@
         height: 250px;
         width: 250px;
     }
-    #app-container{
-        height: 80vh;
-    }
+    // #app-container{
+    //     // height: 80vh;
+    // }
 }
