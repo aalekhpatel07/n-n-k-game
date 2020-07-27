@@ -8,6 +8,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "dotenv": "^8.2.0",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-device-detect": "^1.13.1",
@@ -22,7 +23,7 @@
     "eject": "react-scripts eject",
     "dev": "nodemon app.js",
     "watch": "sass --watch ./src/stylesheets/scss/_main.scss:./src/stylesheets/css/style.css",
-    "flask": "flask run --host=192.168.0.17 -p 5000"
+    "flask": "python main.py"
   },
   "eslintConfig": {
     "extends": "react-app"

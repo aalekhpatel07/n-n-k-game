@@ -168,7 +168,14 @@ function App() {
      */
     async function requestMove(){
       if(mValue !== null && mValue !== undefined){
-        const URL = `/api/move`;
+        let URL;
+        if(process.env.NODE_ENV === 'development'){
+          URL = 'http://192.168.0.17:1337/api/move';
+        }else if(process.env.NODE_ENV === 'production'){
+          URL = '/api/move'; 
+        }else{
+          URL = 'http://192.168.0.17:1337/api/move';
+        }
         const response = await fetch(URL, {
             method: 'POST',
             headers: {

@@ -4,7 +4,6 @@ from random import sample
 from random import randint
 
 
-
 class TicTacToe:
     def __init__(self, dimension, board=None, streak=None):
         if streak is None:
@@ -172,7 +171,6 @@ class TicTacToe:
             val = self.minimax_helper(alpha, beta, depth=max_depth, is_maximizing=True, max_depth=max_depth)
             self.remove(pos=c)
             bestMoves[c] = val
-        print(bestMoves)
         return min(bestMoves, key=lambda x: bestMoves[x])
 
     def tie(self):
