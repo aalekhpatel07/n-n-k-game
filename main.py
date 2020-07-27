@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS, cross_origin
+
 from tictactoe import main_driver
 import os
+
 
 
 # Flask app setup.
@@ -10,7 +12,6 @@ app = Flask(__name__, static_folder='build', template_folder='build')
 # Cors setup.
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-
 
 
 # Routes
@@ -45,3 +46,4 @@ def send_move():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
+

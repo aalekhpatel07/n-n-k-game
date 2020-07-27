@@ -5,10 +5,6 @@
 /.pnp
 .pnp.js
 
-# media
-/src/media
-
-
 # testing
 /coverage
 

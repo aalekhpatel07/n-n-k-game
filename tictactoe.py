@@ -3,8 +3,6 @@ from random import shuffle
 from random import sample
 from random import randint
 
-
-
 class TicTacToe:
     def __init__(self, dimension, board=None, streak=None):
         if streak is None:
@@ -196,12 +194,9 @@ class TicTacToe:
 
     def minimax_helper(self, alpha, beta, depth=18, is_maximizing=True, max_depth=18):
         avail_indices = list(self.available_indices())
-
         if depth == 0 or self.is_game_complete() or len(avail_indices) == 0:
             ev = self.evaluate()
             return ev
-        
-        shuffle(avail_indices)
 
         if is_maximizing:
             value = -inf
