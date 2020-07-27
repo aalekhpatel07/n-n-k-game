@@ -1,6 +1,6 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-# The $(n, n, k)-$game : A generalization of Tic-Tac-Toe
+# The (n, n, k)-game : A generalization of Tic-Tac-Toe
 
 The standard game of Tic-Tac-Toe is generalized by allowing to resize the square grid as well as adjusting the streak of symbols required to end the game.
 
