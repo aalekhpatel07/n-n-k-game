@@ -162,8 +162,7 @@ function App() {
 
   async function requestMove(){
     if(mValue !== null && mValue !== undefined){
-      const PORT = 5000;
-      const URL = `http://192.168.0.17:${PORT}/move`
+      const URL = `/api/move`;
       const response = await fetch(URL, {
           method: 'POST',
           headers: {

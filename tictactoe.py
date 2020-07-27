@@ -1,49 +1,89 @@
-from math import inf
+from math import inf, floor, log10
 from random import shuffle
-import sys
-from random import randrange
-from math import sqrt
-
+from random import sample
+from random import randint
 
 class TicTacToe:
-    def __init__(self, dimension, board=None):
+    def __init__(self, dimension, board=None, streak=None):
+        if streak is None:
+            self.streak = dimension
+        else:
+            self.streak = streak
         self.dimension = dimension
         if board:
             self.board = [[board[i][j] for j in range(self.dimension)] for i in range(self.dimension)]
         else:
             self.board = [['_' for _ in range(self.dimension)] for __ in range(self.dimension)]
-
         pass
 
-    def number_of_winning_chances(self, player):
+    def transpose(self):
+        t = [[self.board[j][i] for j in range(self.dimension)] for i in range(self.dimension)]
+        return t
 
+    def is_valid(self):
+        x_count = 0
+        o_count = 0
+        for i in range(self.dimension):
+            for j in range(self.dimension):
+                if self.board[i][j] == 'o':
+                    o_count += 1
+                elif self.board[i][j] == 'x':
+                    x_count += 1
+        return abs(o_count - x_count) <= 1 and not(self.has_o_won() and self.has_x_won())
+
+    def number_of_winning_chances(self, player):
         count = 0
+        _m = self.streak
+        _d = self.dimension
+
+        # Count all strips of the board
+        # where player could possibly win.
+
         target = {player, '_'}
 
-        for i in range(self.dimension):
-            if set(self.board[i]).issubset(target):
-                count += 1
-        for i in range(self.dimension):
-            if set([self.board[j][i] for j in range(self.dimension)]).issubset(target):
-                count += 1
-        if set([self.board[i][i] for i in range(self.dimension)]).issubset(target):
-            count += 1
-        if set([self.board[i][-i] for i in range(self.dimension)]).issubset(target):
-            count += 1
+        # check top-left -> bottom-right diagonals.
+        for i in range(_m - 1, _d):
+            for j in range(_m - 1, _d):
+                strip = [self.board[i - k][j - k] for k in range(_m)]
+                if set(strip).issubset(target):
+                    count += 1
+
+        # check top-right -> bottom-left diagonals.
+        for i in range(_m - 1, _d):
+            for j in range(0, _d - _m + 1):
+                strip = [self.board[i - k][j + k] for k in range(_m)]
+                if set(strip).issubset(target):
+                    count += 1
+
+        # all diagonals checked.
+
+        # check all rows.
+
+        for i in range(_d):
+            for j in range(_d - _m + 1):
+                strip = self.board[i][j:j + _m]
+                if set(strip).issubset(target):
+                    count += 1
+
+        # Check cols.
+        tp = self.transpose()
+
+        # Instead check rows in transpose.
+        for i in range(_d):
+            for j in range(_d - _m + 1):
+                strip = tp[i][j:j + _m]
+                if set(strip).issubset(target):
+                    count += 1
 
         return count
 
     def evaluate(self):
         if self.has_x_won():
-            return -1000
+            return -10
         elif self.has_o_won():
-            return 1000
+            return 10
         else:
-            # number of rows/columns/diagonals that x can win in
-            # vs number of rows/columns/diagonals that o can win in.
-            x_winning = self.number_of_winning_chances(player='x')
-            o_winning = self.number_of_winning_chances(player='o')
-            return abs(x_winning-o_winning)*300
+            return 0
         pass
 
     def place(self, pos, val):
@@ -52,18 +92,45 @@ class TicTacToe:
         self.board[r][c] = val
 
     def has_won(self, player):
-        for i in range(self.dimension):
-            if self.board[i] == [player for _ in range(self.dimension)]:
-                return True
+        _m = self.streak
+        _d = self.dimension
 
-        for i in range(self.dimension):
-            if [self.board[j][i] for j in range(self.dimension)] == [player for _ in range(self.dimension)]:
-                return True
+        target = [player for _ in range(_m)]
 
-        if [self.board[i][i] for i in range(self.dimension)] == [player for _ in range(self.dimension)]:
-            return True
-        if [self.board[i][-i-1] for i in range(self.dimension)] == [player for _ in range(self.dimension)]:
-            return True
+        # check top-left -> bottom-right diagonals.
+        for i in range(_m - 1, _d):
+            for j in range(_m - 1, _d):
+                strip = [self.board[i-k][j-k] for k in range(_m)][::-1]
+                if strip == target:
+                    return True
+
+        # check top-right -> bottom-left diagonals.
+        for i in range(_m - 1, _d):
+            for j in range(0, _d - _m + 1):
+                strip = [self.board[i-k][j+k] for k in range(_m)][::-1]
+                if strip == target:
+                    return True
+
+        # all diagonals checked.
+
+        # check all rows.
+
+        for i in range(_d):
+            for j in range(_d - _m + 1):
+                strip = self.board[i][j:j+_m]
+                if strip == target:
+                    return True
+
+        # Check cols.
+        tp = self.transpose()
+
+        # Instead check rows in transpose.
+        for i in range(_d):
+            for j in range(_d - _m + 1):
+                strip = tp[i][j:j+_m]
+                if strip == target:
+                    return True
+
         return False
 
     def has_x_won(self):
@@ -79,6 +146,32 @@ class TicTacToe:
                 if self.board[i][j] == '_':
                     idx |= {i*self.dimension + j}
         return idx
+
+    def get_best_move_x(self, max_depth=None):
+        if self.is_game_complete():
+            if self.has_o_won():
+                return -2
+            elif self.has_x_won():
+                return -3
+            elif self.tie():
+                return -4
+            return -1
+        alpha = -inf
+        beta = inf
+        bestMoves = dict()
+        if max_depth is None:
+            max_depth = max(3, floor(0.5*(6 / log10(self.dimension))))
+            if self.dimension > 4:
+                max_depth = 2
+            if self.dimension > 6:
+                max_depth = 1
+        for c in self.available_indices():
+            self.place(pos=c, val='x')
+            val = self.minimax_helper(alpha, beta, depth=max_depth, is_maximizing=True, max_depth=max_depth)
+            self.remove(pos=c)
+            bestMoves[c] = val
+        print(bestMoves)
+        return min(bestMoves, key=lambda x: bestMoves[x])
 
     def tie(self):
         return not self.has_o_won() and not self.has_x_won() and len(self.available_indices()) == 0
@@ -99,209 +192,124 @@ class TicTacToe:
             res += '\n'
         return res
 
+    def minimax_helper(self, alpha, beta, depth=18, is_maximizing=True, max_depth=18):
+        avail_indices = list(self.available_indices())
+        if depth == 0 or self.is_game_complete() or len(avail_indices) == 0:
+            ev = self.evaluate()
+            return ev
 
-def minimax_helper(board: TicTacToe, first_moves, player='o', depth=0, max_depth=18, is_maximizing=True):
-    avail_indices = list(board.available_indices())
-
-    if board.has_x_won():
-        # print(board)
-        return -1000, first_moves
-    if board.has_o_won():
-        # print(board)
-        return 1000, first_moves
-
-    if depth == max_depth or len(avail_indices) == 0:
-        return board.evaluate(), first_moves
-
-    shuffle(avail_indices)
-
-    if is_maximizing:
-        value = -inf
-        for idx in avail_indices:
-            if player == 'o':
-                board.place(pos=idx, val='o')
-                temp, first_moves = minimax_helper(
-                    board=board,
-                    player='x',
-                    depth=depth+1,
-                    max_depth=max_depth,
+        if is_maximizing:
+            value = -inf
+            for idx in avail_indices:
+                self.place(pos=idx, val='o')
+                temp = self.minimax_helper(
+                    alpha=alpha,
+                    beta=beta,
+                    depth=depth-1,
                     is_maximizing=False,
-                    first_moves=first_moves
+                    max_depth=max_depth
                 )
-                if temp > value:
-                    value = temp
-                    if depth == 1:
-                        if idx in first_moves:
-                            if first_moves[idx] < value:
-                                first_moves[idx] = value
-                        else:
-                            first_moves[idx] = value
+                value = max(value, temp)
+                alpha = max(alpha, temp)
+                self.remove(idx)
 
-            else:
-                board.place(pos=idx, val='x')
-                temp, first_moves = minimax_helper(
-                    board=board,
-                    player='o',
-                    depth=depth+1,
+                if beta <= alpha:
+                    break
+
+            if value != 0:
+                return value - (max_depth-depth)
+            return value
+        else:
+            value = inf
+            for idx in avail_indices:
+                self.place(pos=idx, val='x')
+                temp = self.minimax_helper(
+                    alpha=alpha,
+                    beta=beta,
+                    depth=depth-1,
                     max_depth=max_depth,
-                    is_maximizing=False,
-                    first_moves=first_moves
+                    is_maximizing=True
                 )
-                if temp > value:
-                    value = temp
-                    if depth == 1:
-                        if idx in first_moves:
-                            if first_moves[idx] < value:
-                                first_moves[idx] = value
-                        else:
-                            first_moves[idx] = value
-            board.remove(idx)
-        return value, first_moves
-    else:
-        value = inf
-        for idx in avail_indices:
-            if player == 'o':
-                board.place(pos=idx, val='o')
-                temp, first_moves = minimax_helper(
-                    board=board,
-                    player='x',
-                    depth=depth+1,
-                    max_depth=max_depth,
-                    is_maximizing=True,
-                    first_moves=first_moves
-                )
-                if temp < value:
-                    value = temp
-                    if depth == 1:
-                        if idx in first_moves:
-                            if first_moves[idx] > value:
-                                first_moves[idx] = value
-                        else:
-                            first_moves[idx] = value
-            else:
-                board.place(pos=idx, val='x')
-                temp, first_moves = minimax_helper(
-                    board=board,
-                    player='o',
-                    depth=depth+1,
-                    max_depth=max_depth,
-                    is_maximizing=True,
-                    first_moves=first_moves
-                )
+                value = min(value, temp)
+                beta = min(beta, temp)
+                self.remove(idx)
+                if beta <= alpha:
+                    break
 
-                if temp < value:
-                    value = temp
-                    if depth == 1:
-                        if idx in first_moves:
-                            if first_moves[idx] > value:
-                                first_moves[idx] = value
-                        else:
-                            first_moves[idx] = value
-
-            board.remove(idx)
-        return value, first_moves
+            if value != 0:
+                return value + (max_depth-depth)
+            return value
 
 
-def minimax(board, to_move, max_depth=18):
+def main_driver(board, streak, depth=None):
+    ttt = TicTacToe(len(board), board=board, streak=streak)
+    move = ttt.get_best_move_x(depth)
 
-    first_moves = dict()
-    current = to_move
-    answer, first_moves = minimax_helper(
-        board=board,
-        player=current,
-        depth=1,
-        max_depth=max_depth,
-        is_maximizing=False,
-        first_moves=first_moves
-    )
-    if len(first_moves) > 0:
-        move = min(first_moves, key=lambda x: first_moves[x])
-    else:
-        move = -1
-    if move == -1:
-        return move, move
-    return move, first_moves[move]
+    if move < 0:
+        result = '-1 -1 '
+        if move == -2:
+            result += 'o'
+        elif move == -3:
+            result += 'x'
+        elif move == -4:
+            result += 't'
+        else:
+            result += 'i'
+        return result
 
-
-def driver():
-    dimension = 3
-    board = TicTacToe(dimension)
-    used = set()
-
-    while not board.is_game_complete():
-        r, c = list(map(int, input('Play as O. Enter an index: ').split(' ')))
-        if r == c == -1:
-            break
-        while not (0 <= min(r, c) <= max(r, c) <= dimension-1) or dimension*r+c in used:
-            print('index invalid.')
-            r, c = list(map(int, input('Play as O. Enter an index: ').split(' ')))
-        if r == c == -1:
-            break
-        board.place(pos=dimension*r + c, val='o')
-        used |= {dimension*r + c}
-        print(board)
-        print('You played a `O` at: ', (str(r), str(c)))
-
-        if board.has_o_won():
-            print('You win!')
-            return
-        if board.tie():
-            print('The game has been tied!')
-            return
-
-        move, val = minimax(board, 'x')
-        print(val)
-        if move == -1:
-            break
-        board.place(pos=move, val='x')
-        used |= {move}
-        print(board)
-        print('AI plays an X at: ', str(divmod(move, dimension)))
-
-        if board.has_x_won():
-            print('AI wins! Better luck next time.')
-            return
-        if board.tie():
-            print('The game has been tied!')
-            return
-
-
-def main(board):
-    ttt = TicTacToe(len(board), board=board)
-    if len(board) == 3:
-        move, val = minimax(ttt, 'x', max_depth=18)
-    else:
-        move, val = minimax(ttt, 'x', max_depth=6)
-    if move == -1:
-        print(-1)
-        return
     r, c = divmod(move, len(board))
-    print(r, c, end=' ')
+    result = f'{str(r)} {str(c)} '
 
     ttt.place(pos=move, val='x')
     if ttt.has_x_won():
-
-        print('x')
+        result += 'x'
     elif ttt.tie():
-        print('t')
+        result += 't'
+    elif ttt.has_o_won():
+        result += 'o'
     else:
-        print('i')
-    return
+        result += 'i'
+    return result
 
 
-def driver_0():
-    arr = sys.argv[1].split(',')
+def generate_helper(board, dim, i, j, count, streak):
+    if i == dim - 1 and j == dim:
+        ttt = TicTacToe(dimension=dim, board=board, streak=streak)
+        if ttt.is_valid():
+            count['distinct'] += 1
+            if ttt.has_x_won():
+                count['x'] += 1
+                print(f'{count["distinct"]: 02d}: x wins in: \n')
+                print(ttt)
+            elif ttt.has_o_won():
+                count['o'] += 1
+                print(f'{count["distinct"]: 02d}: o wins in: \n')
+                print(ttt)
+            elif ttt.tie():
+                count['tie'] += 1
+                print(f'{count["distinct"]: 02d}: game tied in: \n')
+                print(ttt)
+            # print(ttt)
+        return False
+    elif j == dim:
+        generate_helper(board, dim, i+1, 0, count, streak)
+    else:
+        for p in ['x', 'o']:
+            if board[i][j] == '_':
+                board[i][j] = p
+                if generate_helper(board, dim, i, j+1, count, streak):
+                    return True
+                board[i][j] = '_'
+    return False
 
-    dimension = int(sqrt(len(arr)))
 
-    board = [[arr[dimension*i + j] for j in range(dimension)] for i in range(dimension)]
-    main(board)
-
-    # print(arr)
-    sys.stdout.flush()
-    return
+def generate(dim, streak):
+    board = [['_' for _ in range(dim)] for _ in range(dim)]
+    count = {'distinct': 0, 'o': 0, 'x': 0, 'tie': 0}
+    generate_helper(board, dim, 0, 0, count, streak)
+    print(count)
+    pass
 
 
 if __name__ == '__main__':
-    driver_0()
-    # main()
+    pass
